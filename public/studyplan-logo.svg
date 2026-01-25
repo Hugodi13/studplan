@@ -1,0 +1,8 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="white"/>
+  <g transform="translate(64 140)">
+    <text x="0" y="90" font-family="Arial, sans-serif" font-size="120" font-weight="700" fill="#6F8A5A">STUD</text>
+    <rect x="0" y="110" width="384" height="6" fill="#6F8A5A" opacity="0.6"/>
+    <text x="0" y="210" font-family="Arial, sans-serif" font-size="120" font-weight="700" fill="#7B7B72">PLAN</text>
+  </g>
+</svg>
