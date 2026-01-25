@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
+import { Apple, Chrome, Eye, EyeOff } from 'lucide-react'
 import { base44 } from '@/api/base44Client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,6 +48,16 @@ export default function Login({ onLogin }) {
     }
   }
 
+  const handleOAuth = async (provider) => {
+    try {
+      const user = await base44.auth.oauth({ provider })
+      onLogin?.(user)
+      navigate('/')
+    } catch (err) {
+      setError("Connexion impossible pour l'instant.")
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
       <Card className="w-full max-w-md">
@@ -90,6 +100,26 @@ export default function Login({ onLogin }) {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+            </div>
+            <div className="space-y-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-center gap-2"
+                onClick={() => handleOAuth('google')}
+              >
+                <Chrome className="h-4 w-4" />
+                Continuer avec Google
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-center gap-2"
+                onClick={() => handleOAuth('apple')}
+              >
+                <Apple className="h-4 w-4" />
+                Continuer avec Apple
+              </Button>
             </div>
             {error ? <p className="text-sm text-red-600">{error}</p> : null}
             <Button type="submit" className="w-full">

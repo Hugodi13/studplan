@@ -49,6 +49,16 @@ const createLocalToken = (user: User) => {
   return `local.${payload}.token`
 }
 
+const createProviderUser = (provider: string): User => {
+  const id = `${provider}_${Date.now()}_${Math.random().toString(16).slice(2)}`
+  return {
+    id,
+    email: `${id}@studyplan.local`,
+    name: provider === 'google' ? 'Compte Google' : 'Compte Apple',
+    role: 'user',
+  }
+}
+
 const notifyAuthChange = (user: User | null) => {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('studyplan:auth', { detail: user }))
@@ -169,13 +179,17 @@ const auth = {
   getCurrentUser: () => getStoredUser() ?? parseToken(getToken()),
   me: async () => {
     const token = getToken()
-    if (!token) return null
-    const response = await fetch('/api/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    if (!response.ok) return null
-    const data = await response.json()
-    return data.user
+    if (!token) return getStoredUser()
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!response.ok) throw new Error('Auth failed')
+      const data = await response.json()
+      return data.user
+    } catch {
+      return getStoredUser() ?? parseToken(token)
+    }
   },
   register: async ({ email, password, name }: { email: string; password: string; name?: string }) => {
     try {
@@ -228,6 +242,17 @@ const auth = {
       notifyAuthChange(localUser)
       return localUser
     }
+  },
+  oauth: async ({ provider }: { provider: 'google' | 'apple' }) => {
+    const localUser = createProviderUser(provider)
+    const users = readLocalUsers()
+    users.push(localUser)
+    writeLocalUsers(users)
+    const token = createLocalToken(localUser)
+    setToken(token)
+    setStoredUser(localUser)
+    notifyAuthChange(localUser)
+    return localUser
   },
   logout: async () => {
     setToken(null)
