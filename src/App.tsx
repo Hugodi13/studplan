@@ -9,7 +9,7 @@ import { getStoredUser } from './auth/localAuth'
 
 const queryClient = new QueryClient()
 
-function App() {
+const App = () => {
   const isAuthed = Boolean(getStoredUser())
 
 function App() {
