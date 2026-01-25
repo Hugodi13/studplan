@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label'
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -40,7 +39,7 @@ export default function Login({ onLogin }) {
       return
     }
     try {
-      const user = register({ email, password, name })
+      const user = register({ email, password })
       onLogin?.(user)
       navigate('/')
     } catch (err) {
@@ -66,10 +65,6 @@ export default function Login({ onLogin }) {
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <Label htmlFor="name">Prénom</Label>
-              <Input id="name" value={name} onChange={(event) => setName(event.target.value)} />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -109,7 +104,7 @@ export default function Login({ onLogin }) {
                 onClick={() => handleOAuth('google')}
               >
                 <Chrome className="h-4 w-4" />
-                Continuer avec Google
+                Se connecter avec Google
               </Button>
               <Button
                 type="button"
@@ -118,7 +113,7 @@ export default function Login({ onLogin }) {
                 onClick={() => handleOAuth('apple')}
               >
                 <Apple className="h-4 w-4" />
-                Continuer avec Apple
+                Se connecter avec Apple
               </Button>
             </div>
             {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -128,9 +123,6 @@ export default function Login({ onLogin }) {
             <Button type="button" variant="outline" className="w-full" onClick={handleRegister}>
               Créer un compte
             </Button>
-            <p className="text-xs text-slate-500">
-              Les données sont sauvegardées localement par compte. Tu peux te déconnecter à tout moment.
-            </p>
           </form>
         </CardContent>
       </Card>
