@@ -10,6 +10,7 @@ type User = {
 const storagePrefix = 'studyplan'
 const userKey = `${storagePrefix}:user`
 const tokenKey = `${storagePrefix}:token`
+const usersKey = `${storagePrefix}:users`
 
 const getStoredUser = (): User | null => {
   const raw = localStorage.getItem(userKey)
@@ -27,6 +28,25 @@ const setStoredUser = (user: User | null) => {
     return
   }
   localStorage.setItem(userKey, JSON.stringify(user))
+}
+
+const readLocalUsers = (): User[] => {
+  const raw = localStorage.getItem(usersKey)
+  if (!raw) return []
+  try {
+    return JSON.parse(raw) as User[]
+  } catch {
+    return []
+  }
+}
+
+const writeLocalUsers = (users: User[]) => {
+  localStorage.setItem(usersKey, JSON.stringify(users))
+}
+
+const createLocalToken = (user: User) => {
+  const payload = btoa(JSON.stringify({ sub: user.id, email: user.email, name: user.name, role: user.role }))
+  return `local.${payload}.token`
 }
 
 const notifyAuthChange = (user: User | null) => {
@@ -158,30 +178,56 @@ const auth = {
     return data.user
   },
   register: async ({ email, password, name }: { email: string; password: string; name?: string }) => {
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, name }),
-    })
-    if (!response.ok) throw new Error('Registration failed')
-    const data = await response.json()
-    setToken(data.token)
-    setStoredUser(data.user)
-    notifyAuthChange(data.user)
-    return data.user
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name }),
+      })
+      if (!response.ok) throw new Error('Registration failed')
+      const data = await response.json()
+      setToken(data.token)
+      setStoredUser(data.user)
+      notifyAuthChange(data.user)
+      return data.user
+    } catch {
+      const users = readLocalUsers()
+      if (users.find((user) => user.email === email)) {
+        throw new Error('User already exists')
+      }
+      const localUser: User = { id: email, email, name, role: 'user' }
+      users.push(localUser)
+      writeLocalUsers(users)
+      const token = createLocalToken(localUser)
+      setToken(token)
+      setStoredUser(localUser)
+      notifyAuthChange(localUser)
+      return localUser
+    }
   },
   login: async ({ email, password }: { email: string; password: string }) => {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
-    if (!response.ok) throw new Error('Login failed')
-    const data = await response.json()
-    setToken(data.token)
-    setStoredUser(data.user)
-    notifyAuthChange(data.user)
-    return data.user
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      if (!response.ok) throw new Error('Login failed')
+      const data = await response.json()
+      setToken(data.token)
+      setStoredUser(data.user)
+      notifyAuthChange(data.user)
+      return data.user
+    } catch {
+      const users = readLocalUsers()
+      const localUser = users.find((user) => user.email === email)
+      if (!localUser) throw new Error('Login failed')
+      const token = createLocalToken(localUser)
+      setToken(token)
+      setStoredUser(localUser)
+      notifyAuthChange(localUser)
+      return localUser
+    }
   },
   logout: async () => {
     setToken(null)
