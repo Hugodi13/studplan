@@ -27,7 +27,7 @@ export default function Login({ onLogin }) {
     try {
       const user = login({ email, password })
       onLogin?.(user)
-      navigate('/')
+      window.location.href = '/'
     } catch (err) {
       setError('Connexion impossible. Vérifie tes identifiants.')
     }
@@ -41,7 +41,7 @@ export default function Login({ onLogin }) {
     try {
       const user = register({ email, password })
       onLogin?.(user)
-      navigate('/')
+      window.location.href = '/'
     } catch (err) {
       setError('Inscription impossible. Vérifie les infos.')
     }
@@ -51,7 +51,7 @@ export default function Login({ onLogin }) {
     try {
       const user = oauth({ provider })
       onLogin?.(user)
-      navigate('/')
+      window.location.href = '/'
     } catch (err) {
       setError("Connexion impossible pour l'instant.")
     }

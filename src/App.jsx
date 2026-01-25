@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
@@ -10,7 +11,17 @@ import { getStoredUser } from './auth/localAuth'
 const queryClient = new QueryClient()
 
 const App = () => {
-  const isAuthed = Boolean(getStoredUser())
+  const [isAuthed, setIsAuthed] = useState(Boolean(getStoredUser()))
+
+  useEffect(() => {
+    const handleAuth = () => setIsAuthed(Boolean(getStoredUser()))
+    window.addEventListener('storage', handleAuth)
+    window.addEventListener('studyplan:auth', handleAuth)
+    return () => {
+      window.removeEventListener('storage', handleAuth)
+      window.removeEventListener('studyplan:auth', handleAuth)
+    }
+  }, [])
 
   return (
     <QueryClientProvider client={queryClient}>

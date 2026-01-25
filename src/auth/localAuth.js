@@ -14,9 +14,15 @@ const readUser = () => {
 const writeUser = (user) => {
   if (!user) {
     localStorage.removeItem(storageKey)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('studyplan:auth', { detail: null }))
+    }
     return
   }
   localStorage.setItem(storageKey, JSON.stringify(user))
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('studyplan:auth', { detail: user }))
+  }
 }
 
 const getStoredUser = () => readUser()
