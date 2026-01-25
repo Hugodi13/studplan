@@ -41,6 +41,21 @@ export default function Home() {
     queryFn: () => base44.auth.me()
   });
 
+  if (userLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+        <Card className="max-w-md w-full">
+          <div className="p-6 space-y-2 text-center">
+            <h1 className="text-xl font-semibold text-slate-900">Chargement...</h1>
+            <p className="text-sm text-slate-600">
+              On prépare ton tableau de bord StudyPlan.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   if (!userLoading && !currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
