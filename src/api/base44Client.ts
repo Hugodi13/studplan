@@ -180,6 +180,9 @@ const auth = {
   me: async () => {
     const token = getToken()
     if (!token) return getStoredUser()
+    if (token.startsWith('local.')) {
+      return getStoredUser() ?? parseToken(token)
+    }
     try {
       const response = await fetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
