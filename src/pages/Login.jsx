@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Apple, Chrome, Eye, EyeOff } from 'lucide-react'
-import { base44 } from '@/api/base44Client'
+import { login, oauth, register } from '@/auth/localAuth'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -26,7 +26,7 @@ export default function Login({ onLogin }) {
       return
     }
     try {
-      const user = await base44.auth.login({ email, password })
+      const user = login({ email, password })
       onLogin?.(user)
       navigate('/')
     } catch (err) {
@@ -40,7 +40,7 @@ export default function Login({ onLogin }) {
       return
     }
     try {
-      const user = await base44.auth.register({ email, password, name })
+      const user = register({ email, password, name })
       onLogin?.(user)
       navigate('/')
     } catch (err) {
@@ -50,7 +50,7 @@ export default function Login({ onLogin }) {
 
   const handleOAuth = async (provider) => {
     try {
-      const user = await base44.auth.oauth({ provider })
+      const user = oauth({ provider })
       onLogin?.(user)
       navigate('/')
     } catch (err) {
