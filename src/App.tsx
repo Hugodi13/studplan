@@ -12,6 +12,7 @@ const queryClient = new QueryClient()
 function App() {
   const isAuthed = Boolean(getStoredUser())
 
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
