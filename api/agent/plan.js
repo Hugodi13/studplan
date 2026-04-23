@@ -1,7 +1,8 @@
 const { json, methodNotAllowed, unauthorized } = require('../_lib/response')
 const { verify } = require('../_lib/jwt')
+const { withCors } = require('../_lib/withCors')
 
-module.exports = async (req, res) => {
+module.exports = withCors(async (req, res) => {
   if (req.method !== 'POST') return methodNotAllowed(res)
 
   const authHeader = req.headers.authorization || ''
@@ -10,4 +11,4 @@ module.exports = async (req, res) => {
   if (!payload) return unauthorized(res)
 
   return json(res, 202, { message: 'Agent plan generation queued.' })
-}
+})

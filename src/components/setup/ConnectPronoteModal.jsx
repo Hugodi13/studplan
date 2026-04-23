@@ -1,216 +1,153 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { School, Lock, AlertCircle, Loader2, Shield } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import React, { useState } from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { School, ExternalLink, FileArchive } from 'lucide-react'
+import { useI18n } from '@/lib/I18nContext'
+import pronoteGuide from '@/assets/pronote-user-guide.png'
+import ecoleDirecteGuide from '@/assets/ecoledirecte-user-guide.png'
 
-export default function ConnectPronoteModal({ open, onOpenChange, onConnect }) {
-  const [activeTab, setActiveTab] = useState('pronote');
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [error, setError] = useState('');
-  
-  const [pronoteData, setPronoteData] = useState({
-    username: '',
-    password: '',
-    url: ''
-  });
+export default function ConnectPronoteModal({ open, onOpenChange, onOpenPdfImport }) {
+  const { locale } = useI18n()
+  const isEn = locale === 'en'
+  const tx = {
+    title: isEn ? 'Import from Pronote / Ecole Directe' : 'Importer depuis Pronote / École Directe',
+    subtitle: isEn
+      ? 'No login needed: export homework as PDF, then import it in StudPlan.'
+      : "Aucune connexion nécessaire : exporte les devoirs en PDF puis importe-les dans StudPlan.",
+    guideTitle: isEn ? 'Recommended: import Pronote PDF' : 'Recommandé : import PDF Pronote',
+    guide1: isEn ? '1) In Pronote -> Homework, click print/export and generate a PDF.' : '1) Dans Pronote -> Cahier de texte, clique sur imprimer/exporter puis génère un PDF.',
+    guide2: isEn
+      ? '2) PDF export is available on web/desktop session. Then import it in StudPlan.'
+      : "2) L'export PDF se fait sur la session web/ordinateur, puis importe-le dans StudPlan.",
+    pdfWebHintPronote: isEn
+      ? 'Tip: if the mobile app does not let you save a PDF, open Pronote in your browser (Pronote web) and print / save as PDF from there.'
+      : "Astuce : si l'app mobile ne permet pas d'enregistrer un PDF, ouvre Pronote dans le navigateur (Pronote web) et enregistre en PDF depuis là.",
+    openPronote: isEn ? 'Open Pronote (app first)' : "Ouvrir Pronote (app d'abord)",
+    importPdf: isEn ? 'Import Pronote PDF' : 'Importer un PDF Pronote',
+    guideTitleEd: isEn ? 'Recommended: import Ecole Directe PDF' : 'Recommandé : import PDF École Directe',
+    guideEd1: isEn ? '1) In Ecole Directe -> Homework, use print/export and generate a PDF.' : '1) Dans École Directe -> devoirs, utilise imprimer/exporter puis génère un PDF.',
+    guideEd2: isEn
+      ? '2) PDF export is available on web/desktop session. Then import it in StudPlan.'
+      : "2) L'export PDF se fait sur la session web/ordinateur, puis importe-le dans StudPlan.",
+    pdfWebHintEd: isEn
+      ? 'Tip: if the mobile app does not let you save a PDF, open École Directe in your browser (web version) and print / save as PDF from there.'
+      : "Astuce : si l'app mobile ne permet pas d'enregistrer un PDF, ouvre École Directe dans le navigateur (version web) et enregistre en PDF depuis là.",
+    openEd: isEn ? 'Open Ecole Directe' : 'Ouvrir École Directe',
+    importPdfEd: isEn ? 'Import Ecole Directe PDF' : 'Importer un PDF École Directe',
+    stepVisual: isEn ? 'Visual guide' : 'Guide visuel',
+  }
+  const [activeTab, setActiveTab] = useState('pronote')
 
-  const [edData, setEdData] = useState({
-    username: '',
-    password: ''
-  });
-
-  const handleConnect = async (service) => {
-    setIsConnecting(true);
-    setError('');
-
-    try {
-      const credentials = service === 'pronote' 
-        ? { 
-            pronote_username: pronoteData.username,
-            pronote_password: pronoteData.password,
-            pronote_url: pronoteData.url,
-            auto_sync_enabled: true
-          }
-        : {
-            ecoledirecte_username: edData.username,
-            ecoledirecte_password: edData.password,
-            auto_sync_enabled: true
-          };
-
-      const token = localStorage.getItem('studyplan:token');
-      const endpoint = service === 'pronote' ? '/api/integrations/pronote' : '/api/integrations/ecoledirecte';
-      await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token ? `Bearer ${token}` : ''
-        },
-        body: JSON.stringify(credentials)
-      });
-      await onConnect(credentials);
-      onOpenChange(false);
-    } catch (err) {
-      setError(`Erreur de connexion. Vérifie tes identifiants.`);
+  const openPronote = () => {
+    const webTarget = 'https://www.index-education.com/fr/espaces-pronote.php'
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '')
+    if (isMobile) {
+      window.location.href = 'pronote://'
+      setTimeout(() => {
+        window.open(webTarget, '_blank', 'noopener,noreferrer')
+      }, 700)
+      return
     }
+    window.open(webTarget, '_blank', 'noopener,noreferrer')
+  }
 
-    setIsConnecting(false);
-  };
+  const openEcoleDirecte = () => {
+    window.open('https://www.ecoledirecte.com', '_blank', 'noopener,noreferrer')
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500">
               <School className="w-4 h-4 text-white" />
             </div>
-            Connecter ton compte
+            {tx.title}
           </DialogTitle>
           <DialogDescription>
-            Synchronise automatiquement tes devoirs depuis Pronote ou École Directe
+            {tx.subtitle}
           </DialogDescription>
         </DialogHeader>
 
-        <Alert className="bg-blue-50 border-blue-200">
-          <Shield className="h-4 w-4 text-blue-600" />
-          <AlertDescription className="text-blue-800 text-xs">
-            Tes identifiants sont chiffrés et sécurisés.{' '}
-            <Link to={createPageUrl('Privacy')} className="underline font-medium">
-              Voir la charte de protection des données
-            </Link>
-          </AlertDescription>
-        </Alert>
-
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-2">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="pronote">Pronote</TabsTrigger>
-            <TabsTrigger value="ecoledirecte">École Directe</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 h-12 p-1 bg-slate-100 rounded-xl">
+            <TabsTrigger value="pronote" className="rounded-lg min-h-[44px] text-sm font-semibold">
+              Pronote
+            </TabsTrigger>
+            <TabsTrigger value="ecoledirecte" className="rounded-lg min-h-[44px] text-sm font-semibold">
+              École Directe
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="pronote" className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label htmlFor="pronote-url">URL de ton établissement</Label>
-              <Input
-                id="pronote-url"
-                placeholder="https://0000000a.index-education.net/pronote/"
-                value={pronoteData.url}
-                onChange={(e) => setPronoteData({ ...pronoteData, url: e.target.value })}
-              />
-              <p className="text-xs text-slate-500">
-                Tu peux la trouver dans la barre d'adresse quand tu te connectes à Pronote
+            <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-3 space-y-2">
+              <p className="text-sm font-semibold text-indigo-900">{tx.guideTitle}</p>
+              <p className="text-xs text-indigo-800">{tx.guide1}</p>
+              <p className="text-xs text-indigo-800">{tx.guide2}</p>
+              <p className="text-xs text-indigo-700/90 italic border-t border-indigo-200/80 pt-2 mt-1">
+                {tx.pdfWebHintPronote}
               </p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button type="button" variant="outline" className="border-indigo-300 text-indigo-900" onClick={openPronote}>
+                  <ExternalLink className="w-4 h-4 mr-1" />
+                  {tx.openPronote}
+                </Button>
+                <Button
+                  type="button"
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                  onClick={() => {
+                    onOpenChange(false)
+                    onOpenPdfImport?.('pronote')
+                  }}
+                >
+                  <FileArchive className="w-4 h-4 mr-1" />
+                  {tx.importPdf}
+                </Button>
+              </div>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="pronote-username">Identifiant</Label>
-              <Input
-                id="pronote-username"
-                placeholder="Ton identifiant Pronote"
-                value={pronoteData.username}
-                onChange={(e) => setPronoteData({ ...pronoteData, username: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="pronote-password">Mot de passe</Label>
-              <Input
-                id="pronote-password"
-                type="password"
-                placeholder="••••••••"
-                value={pronoteData.password}
-                onChange={(e) => setPronoteData({ ...pronoteData, password: e.target.value })}
-              />
-            </div>
-
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <Button
-              onClick={() => handleConnect('pronote')}
-              disabled={!pronoteData.username || !pronoteData.password || !pronoteData.url || isConnecting}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-            >
-              {isConnecting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Connexion...
-                </>
-              ) : (
-                <>
-                  <Lock className="w-4 h-4 mr-2" />
-                  Se connecter
-                </>
-              )}
-            </Button>
-
-            <p className="text-xs text-center text-slate-500">
-              ⚠️ Fonctionnalité en développement - Nécessite l'activation des backend functions
-            </p>
+            <img
+              src={pronoteGuide}
+              alt={tx.stepVisual}
+              className="w-full rounded-lg border border-slate-200 bg-white"
+            />
           </TabsContent>
 
           <TabsContent value="ecoledirecte" className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label htmlFor="ed-username">Identifiant</Label>
-              <Input
-                id="ed-username"
-                placeholder="Ton identifiant École Directe"
-                value={edData.username}
-                onChange={(e) => setEdData({ ...edData, username: e.target.value })}
-              />
+            <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-3 space-y-2">
+              <p className="text-sm font-semibold text-indigo-900">{tx.guideTitleEd}</p>
+              <p className="text-xs text-indigo-800">{tx.guideEd1}</p>
+              <p className="text-xs text-indigo-800">{tx.guideEd2}</p>
+              <p className="text-xs text-indigo-700/90 italic border-t border-indigo-200/80 pt-2 mt-1">
+                {tx.pdfWebHintEd}
+              </p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button type="button" variant="outline" className="border-indigo-300 text-indigo-900" onClick={openEcoleDirecte}>
+                  <ExternalLink className="w-4 h-4 mr-1" />
+                  {tx.openEd}
+                </Button>
+                <Button
+                  type="button"
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                  onClick={() => {
+                    onOpenChange(false)
+                    onOpenPdfImport?.('ecoledirecte')
+                  }}
+                >
+                  <FileArchive className="w-4 h-4 mr-1" />
+                  {tx.importPdfEd}
+                </Button>
+              </div>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="ed-password">Mot de passe</Label>
-              <Input
-                id="ed-password"
-                type="password"
-                placeholder="••••••••"
-                value={edData.password}
-                onChange={(e) => setEdData({ ...edData, password: e.target.value })}
-              />
-            </div>
-
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <Button
-              onClick={() => handleConnect('ecoledirecte')}
-              disabled={!edData.username || !edData.password || isConnecting}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-            >
-              {isConnecting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Connexion...
-                </>
-              ) : (
-                <>
-                  <Lock className="w-4 h-4 mr-2" />
-                  Se connecter
-                </>
-              )}
-            </Button>
-
-            <p className="text-xs text-center text-slate-500">
-              ⚠️ Fonctionnalité en développement - Nécessite l'activation des backend functions
-            </p>
+            <img
+              src={ecoleDirecteGuide}
+              alt={tx.stepVisual}
+              className="w-full rounded-lg border border-slate-200 bg-white"
+            />
           </TabsContent>
         </Tabs>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

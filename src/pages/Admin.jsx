@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { base44 } from '@/api/base44Client'
+import { getStudyplanApiUrl } from '@/api/studyplanClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
@@ -11,7 +11,7 @@ export default function Admin() {
     setError('')
     try {
       const token = localStorage.getItem('studyplan:token')
-      const response = await fetch('/api/admin/stats', {
+      const response = await fetch(getStudyplanApiUrl('/api/admin/stats'), {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!response.ok) {

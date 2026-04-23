@@ -6,7 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Settings, Trash2, AlertTriangle, Mail, Shield, Clock, GraduationCap } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { studyplanApi } from "@/api/studyplanClient";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -47,7 +47,7 @@ export default function SettingsModal({ open, onOpenChange, userPrefs, onUpdateP
     setIsDeleting(true);
     try {
       // L'utilisateur sera déconnecté et redirigé
-      await base44.auth.logout();
+      await studyplanApi.auth.logout();
       alert("Ton compte sera supprimé dans les 30 jours. Contacte-nous si tu changes d'avis.");
     } catch (error) {
       alert("Erreur lors de la suppression du compte");

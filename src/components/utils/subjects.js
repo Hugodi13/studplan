@@ -14,8 +14,7 @@ export const getSubjectsForLevel = (classLevel, specialties = []) => {
       "Autre"
     ],
     prepa: [
-      "Mathématiques", "Physique", "Chimie", "SI", "Informatique",
-      "Français-Philo", "Anglais", "LV2", "TIPE", "Autre"
+      "Prépa", "Autre"
     ],
     universite: [
       "Autre"
@@ -34,7 +33,7 @@ export const getSubjectsForLevel = (classLevel, specialties = []) => {
   if (['premiere', 'terminale'].includes(classLevel)) {
     return baseSubjects.lycee_spe;
   }
-  if (classLevel === 'prepa') {
+  if (classLevel === 'prepa' || String(classLevel || '').startsWith('prepa_')) {
     return baseSubjects.prepa;
   }
   if (classLevel === 'universite') {
@@ -57,6 +56,14 @@ export const adjustDifficultyForLevel = (baseDifficulty, classLevel) => {
     premiere: 1.3,
     terminale: 1.5,
     prepa: 2.0,
+    prepa_mpsi: 2.0,
+    prepa_pcsi: 2.0,
+    prepa_ptsi: 2.0,
+    prepa_bcpst: 2.0,
+    prepa_ecg: 1.9,
+    prepa_ect: 1.8,
+    prepa_hypokhagne: 1.7,
+    prepa_khagne: 1.8,
     universite: 1.8,
     professionnel: 1.5
   };

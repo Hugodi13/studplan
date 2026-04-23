@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { studyplanApi } from "@/api/studyplanClient";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Upload, Calendar, ListTodo, Sparkles, Settings as SettingsIcon, Crown } from "lucide-react";
@@ -37,20 +37,20 @@ export default function Home() {
   // Fetch current user first
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me()
+    queryFn: () => studyplanApi.auth.me()
   });
 
   // Fetch tasks (filtered by user)
   const { data: tasks = [], isLoading: tasksLoading } = useQuery({
     queryKey: ['tasks', currentUser?.email],
-    queryFn: () => base44.entities.Task.filter({ created_by: currentUser.email }, '-created_date'),
+    queryFn: () => studyplanApi.entities.Task.filter({ created_by: currentUser.email }, '-created_date'),
     enabled: !!currentUser?.email
   });
 
   // Fetch saved sessions (filtered by user)
   const { data: savedSessions = [] } = useQuery({
     queryKey: ['sessions', currentUser?.email],
-    queryFn: () => base44.entities.StudySession.filter({ created_by: currentUser.email }, '-scheduled_date'),
+    queryFn: () => studyplanApi.entities.StudySession.filter({ created_by: currentUser.email }, '-scheduled_date'),
     enabled: !!currentUser?.email
   });
 
@@ -58,7 +58,7 @@ export default function Home() {
   const { data: userPrefs = null, isLoading: prefsLoading } = useQuery({
     queryKey: ['userPreferences', currentUser?.email],
     queryFn: async () => {
-      const prefs = await base44.entities.UserPreferences.filter({ created_by: currentUser.email });
+      const prefs = await studyplanApi.entities.UserPreferences.filter({ created_by: currentUser.email });
       return prefs[0] || null;
     },
     enabled: !!currentUser?.email
@@ -68,7 +68,7 @@ export default function Home() {
   const { data: reward = null } = useQuery({
     queryKey: ['reward', currentUser?.email],
     queryFn: async () => {
-      const rewards = await base44.entities.Reward.filter({ created_by: currentUser.email });
+      const rewards = await studyplanApi.entities.Reward.filter({ created_by: currentUser.email });
       return rewards[0] || null;
     },
     enabled: !!currentUser?.email
@@ -78,7 +78,7 @@ export default function Home() {
   const { data: subscription = null } = useQuery({
     queryKey: ['subscription', currentUser?.email],
     queryFn: async () => {
-      const subs = await base44.entities.Subscription.filter({ created_by: currentUser.email });
+      const subs = await studyplanApi.entities.Subscription.filter({ created_by: currentUser.email });
       return subs[0] || null;
     },
     enabled: !!currentUser?.email
@@ -125,17 +125,17 @@ export default function Home() {
 
   // Mutations
   const createTask = useMutation({
-    mutationFn: (data) => base44.entities.Task.create(data),
+    mutationFn: (data) => studyplanApi.entities.Task.create(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
   });
 
   const bulkCreateTasks = useMutation({
-    mutationFn: (data) => base44.entities.Task.bulkCreate(data),
+    mutationFn: (data) => studyplanApi.entities.Task.bulkCreate(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
   });
 
   const updateTask = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
+    mutationFn: ({ id, data }) => studyplanApi.entities.Task.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
   });
 
@@ -144,10 +144,10 @@ export default function Home() {
       // Delete associated sessions first
       const sessionsToDelete = savedSessions.filter(s => s.task_id === taskId);
       for (const session of sessionsToDelete) {
-        await base44.entities.StudySession.delete(session.id);
+        await studyplanApi.entities.StudySession.delete(session.id);
       }
       // Then delete the task
-      await base44.entities.Task.delete(taskId);
+      await studyplanApi.entities.Task.delete(taskId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
@@ -156,32 +156,32 @@ export default function Home() {
   });
 
   const bulkCreateSessions = useMutation({
-    mutationFn: (data) => base44.entities.StudySession.bulkCreate(data),
+    mutationFn: (data) => studyplanApi.entities.StudySession.bulkCreate(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sessions'] })
   });
 
   const updateSession = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.StudySession.update(id, data),
+    mutationFn: ({ id, data }) => studyplanApi.entities.StudySession.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sessions'] })
   });
 
   const createPreferences = useMutation({
-    mutationFn: (data) => base44.entities.UserPreferences.create(data),
+    mutationFn: (data) => studyplanApi.entities.UserPreferences.create(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userPreferences'] })
   });
 
   const updatePreferences = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.UserPreferences.update(id, data),
+    mutationFn: ({ id, data }) => studyplanApi.entities.UserPreferences.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userPreferences'] })
   });
 
   const createReward = useMutation({
-    mutationFn: (data) => base44.entities.Reward.create(data),
+    mutationFn: (data) => studyplanApi.entities.Reward.create(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['reward'] })
   });
 
   const updateReward = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Reward.update(id, data),
+    mutationFn: ({ id, data }) => studyplanApi.entities.Reward.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['reward'] })
   });
 

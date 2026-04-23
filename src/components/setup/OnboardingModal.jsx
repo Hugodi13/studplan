@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
 import { GraduationCap, Sparkles, ArrowRight } from "lucide-react";
 
 const CLASS_LEVELS = [
@@ -47,25 +47,53 @@ const SPECIALTIES = [
   "HGGSP", "HLP", "LLCER Anglais", "LLCER Espagnol", "Arts"
 ];
 
+const PREPA_TYPES = [
+  { value: 'prepa_mpsi', label: 'MPSI' },
+  { value: 'prepa_pcsi', label: 'PCSI' },
+  { value: 'prepa_ptsi', label: 'PTSI' },
+  { value: 'prepa_bcpst', label: 'BCPST' },
+  { value: 'prepa_ecg', label: 'ECG' },
+  { value: 'prepa_ect', label: 'ECT' },
+  { value: 'prepa_hypokhagne', label: 'Hypokhâgne' },
+  { value: 'prepa_khagne', label: 'Khâgne' },
+];
+
 export default function OnboardingModal({ open, onComplete }) {
   const [step, setStep] = useState(1);
   const [classLevel, setClassLevel] = useState('');
+  const [prepaType, setPrepaType] = useState('');
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
+  const [dailyMinutes, setDailyMinutes] = useState(120);
+  const [startHour, setStartHour] = useState(17);
+  const [includeSunday, setIncludeSunday] = useState(false);
 
   const needsSpecialties = ['premiere', 'terminale'].includes(classLevel);
+  const needsPrepaType = classLevel === 'prepa';
+  const maxSpecialties = classLevel === 'premiere' ? 3 : classLevel === 'terminale' ? 2 : 3;
 
   const handleComplete = () => {
+    const finalLevel = classLevel === 'prepa' ? prepaType : classLevel;
     onComplete({
-      class_level: classLevel,
+      class_level: finalLevel,
       specialties: selectedSpecialties,
+      daily_study_minutes: dailyMinutes,
+      study_start_hour: startHour,
+      include_sunday: includeSunday,
       onboarding_completed: true
     });
+  };
+
+  const formatTime = (minutes) => {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    if (h === 0) return `${m} min`;
+    return m > 0 ? `${h} h ${m} min` : `${h} h`;
   };
 
   const toggleSpecialty = (specialty) => {
     if (selectedSpecialties.includes(specialty)) {
       setSelectedSpecialties(selectedSpecialties.filter(s => s !== specialty));
-    } else if (selectedSpecialties.length < 3) {
+    } else if (selectedSpecialties.length < maxSpecialties) {
       setSelectedSpecialties([...selectedSpecialties, specialty]);
     }
   };
@@ -80,7 +108,7 @@ export default function OnboardingModal({ open, onComplete }) {
                 <GraduationCap className="w-8 h-8 text-white" />
               </div>
               <DialogTitle className="text-2xl text-center">
-                Bienvenue sur StudyPlan !
+                Bienvenue sur StudPlan !
               </DialogTitle>
               <DialogDescription className="text-center">
                 Commençons par configurer ton profil pour personnaliser tes révisions
@@ -129,7 +157,10 @@ export default function OnboardingModal({ open, onComplete }) {
                     <Button
                       key={level.value}
                       variant={classLevel === level.value ? "default" : "outline"}
-                      onClick={() => setClassLevel(level.value)}
+                      onClick={() => {
+                        setClassLevel(level.value);
+                        if (level.value !== 'prepa') setPrepaType('');
+                      }}
                       className={classLevel === level.value ? "bg-violet-600" : ""}
                     >
                       {level.label}
@@ -155,28 +186,121 @@ export default function OnboardingModal({ open, onComplete }) {
               </div>
             </div>
 
+            <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <Label className="text-sm">Temps quotidien de révision</Label>
+              <div className="flex justify-between text-xs text-slate-600">
+                <span>Objectif</span>
+                <span className="font-semibold text-violet-700">{formatTime(dailyMinutes)}</span>
+              </div>
+              <Slider
+                value={[dailyMinutes]}
+                onValueChange={([v]) => setDailyMinutes(v)}
+                min={30}
+                max={540}
+                step={15}
+              />
+
+              <div className="flex justify-between text-xs text-slate-600 mt-2">
+                <span>Heure de début</span>
+                <span className="font-semibold text-violet-700">{startHour}h00</span>
+              </div>
+              <Slider
+                value={[startHour]}
+                onValueChange={([v]) => setStartHour(v)}
+                min={6}
+                max={22}
+                step={1}
+              />
+
+              <div className="flex items-center justify-between pt-1">
+                <Label className="text-sm">Travailler le dimanche</Label>
+                <Button
+                  type="button"
+                  variant={includeSunday ? "default" : "outline"}
+                  size="sm"
+                  className={includeSunday ? "bg-emerald-600 hover:bg-emerald-700" : ""}
+                  onClick={() => setIncludeSunday((v) => !v)}
+                >
+                  {includeSunday ? 'Oui' : 'Non'}
+                </Button>
+              </div>
+            </div>
+
             <Button
-              onClick={() => needsSpecialties ? setStep(2) : handleComplete()}
+              onClick={() => {
+                if (needsPrepaType) {
+                  setStep(2);
+                  return;
+                }
+                if (needsSpecialties) {
+                  setStep(3);
+                  return;
+                }
+                handleComplete();
+              }}
               disabled={!classLevel}
               className="w-full h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
             >
-              {needsSpecialties ? 'Suivant' : 'Commencer'}
+              {(needsSpecialties || needsPrepaType) ? 'Suivant' : 'Commencer'}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
+          </>
+        ) : step === 2 ? (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl">Type de Prépa</DialogTitle>
+              <DialogDescription>
+                Sélectionne ta filière pour personnaliser le planning.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="grid grid-cols-2 gap-2 py-4">
+              {PREPA_TYPES.map((item) => (
+                <Button
+                  key={item.value}
+                  type="button"
+                  variant={prepaType === item.value ? "default" : "outline"}
+                  onClick={() => setPrepaType(item.value)}
+                  className={prepaType === item.value ? "bg-violet-600" : ""}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setStep(1)}
+                className="flex-1"
+              >
+                Retour
+              </Button>
+              <Button
+                onClick={handleComplete}
+                disabled={!prepaType}
+                className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
+              >
+                Commencer
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           </>
         ) : (
           <>
             <DialogHeader>
               <DialogTitle className="text-xl">Tes spécialités</DialogTitle>
               <DialogDescription>
-                Sélectionne jusqu'à 3 spécialités que tu suis cette année
+                {classLevel === 'premiere'
+                  ? "Sélectionne jusqu'à 3 spécialités que tu suis cette année"
+                  : "Sélectionne jusqu'à 2 spécialités que tu gardes en terminale"}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-3 py-6">
               {SPECIALTIES.map(specialty => {
                 const isSelected = selectedSpecialties.includes(specialty);
-                const canSelect = selectedSpecialties.length < 3 || isSelected;
+                const canSelect = selectedSpecialties.length < maxSpecialties || isSelected;
                 
                 return (
                   <button
@@ -207,7 +331,7 @@ export default function OnboardingModal({ open, onComplete }) {
             </div>
 
             <div className="text-sm text-center text-slate-500 mb-4">
-              {selectedSpecialties.length}/3 spécialités sélectionnées
+              {selectedSpecialties.length}/{maxSpecialties} spécialités sélectionnées
             </div>
 
             <div className="flex gap-3">

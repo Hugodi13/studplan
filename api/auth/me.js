@@ -1,7 +1,8 @@
 const { json, methodNotAllowed, unauthorized } = require('../_lib/response')
 const { verify } = require('../_lib/jwt')
+const { withCors } = require('../_lib/withCors')
 
-module.exports = async (req, res) => {
+module.exports = withCors(async (req, res) => {
   if (req.method !== 'GET') return methodNotAllowed(res, ['GET'])
 
   const authHeader = req.headers.authorization || ''
@@ -14,4 +15,4 @@ module.exports = async (req, res) => {
   return json(res, 200, {
     user: { id: payload.sub, email: payload.email, role: payload.role },
   })
-}
+})

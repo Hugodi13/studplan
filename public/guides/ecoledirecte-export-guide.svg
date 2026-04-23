@@ -1,0 +1,21 @@
+<svg width="900" height="520" viewBox="0 0 900 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="520" rx="24" fill="#ECFEFF"/>
+  <rect x="42" y="42" width="816" height="436" rx="18" fill="white" stroke="#A5F3FC" stroke-width="2"/>
+  <text x="72" y="96" fill="#155E75" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700">Ecole Directe - Export PDF des devoirs</text>
+  <rect x="72" y="126" width="340" height="120" rx="14" fill="#ECFEFF"/>
+  <text x="92" y="166" fill="#0E7490" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">1) Ouvre Ecole Directe</text>
+  <text x="92" y="198" fill="#0891B2" font-family="Inter, Arial, sans-serif" font-size="18">Va dans l'onglet Devoirs</text>
+  <text x="92" y="224" fill="#0891B2" font-family="Inter, Arial, sans-serif" font-size="18">et affiche la p�riode voulue.</text>
+  <rect x="488" y="126" width="340" height="120" rx="14" fill="#ECFEFF"/>
+  <text x="508" y="166" fill="#0E7490" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">2) Imprime ou Exporte en PDF</text>
+  <text x="508" y="198" fill="#0891B2" font-family="Inter, Arial, sans-serif" font-size="18">T�l�charge ensuite le PDF</text>
+  <text x="508" y="224" fill="#0891B2" font-family="Inter, Arial, sans-serif" font-size="18">sur ton t�l�phone ou PC.</text>
+  <rect x="280" y="286" width="340" height="140" rx="14" fill="#CFFAFE"/>
+  <text x="300" y="326" fill="#155E75" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">3) D�pose le PDF dans StudPlan</text>
+  <text x="300" y="358" fill="#0E7490" font-family="Inter, Arial, sans-serif" font-size="18">StudPlan lit automatiquement le document</text>
+  <text x="300" y="384" fill="#0E7490" font-family="Inter, Arial, sans-serif" font-size="18">et ajoute les t�ches dans ta liste.</text>
+  <path d="M428 185H468" stroke="#0891B2" stroke-width="8" stroke-linecap="round"/>
+  <path d="M458 171L476 185L458 199" stroke="#0891B2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M620 256L560 286" stroke="#0891B2" stroke-width="8" stroke-linecap="round"/>
+  <path d="M558 268L546 292L572 292" fill="#0891B2"/>
+</svg>

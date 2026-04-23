@@ -1,16 +1,16 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { logout, getStoredUser } from '@/auth/localAuth'
+import { studyplanApi } from '@/api/studyplanClient'
 
 export default function Dashboard() {
-  const user = getStoredUser()
+  const user = studyplanApi.auth.getCurrentUser()
 
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
         <Card className="p-6 space-y-2">
-          <h1 className="text-2xl font-semibold text-slate-900">Bienvenue sur StudyPlan</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">Bienvenue sur StudPlan</h1>
           <p className="text-sm text-slate-600">
             Ton compte est bien créé et tu es connecté.
           </p>
@@ -34,8 +34,8 @@ export default function Dashboard() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => {
-              logout()
+            onClick={async () => {
+              await studyplanApi.auth.logout()
               window.location.href = '/login'
             }}
           >

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { getStudyplanApiUrl } from '@/api/studyplanClient'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
@@ -10,7 +11,7 @@ export default function Support() {
   const handleSubmit = async () => {
     setStatus('')
     const token = localStorage.getItem('studyplan:token')
-    const response = await fetch('/api/support/tickets', {
+    const response = await fetch(getStudyplanApiUrl('/api/support/tickets'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

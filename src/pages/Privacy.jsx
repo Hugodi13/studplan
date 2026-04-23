@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useI18n } from '@/lib/I18nContext';
 
 export default function Privacy() {
+  const { locale } = useI18n();
+  const isEn = locale === 'en';
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-slate-200/50">
@@ -13,7 +16,7 @@ export default function Privacy() {
           <Link to={createPageUrl('Home')}>
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="w-4 h-4" />
-              Retour
+              {isEn ? 'Back' : 'Retour'}
             </Button>
           </Link>
         </div>
@@ -25,13 +28,13 @@ export default function Privacy() {
             <Shield className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-slate-900 mb-4">
-            Charte de Protection des Données
+            {isEn ? 'Data Protection Policy' : 'Charte de Protection des Données'}
           </h1>
           <p className="text-lg text-slate-600">
-            Nous prenons la sécurité de tes données très au sérieux
+            {isEn ? 'We take your data security very seriously' : 'Nous prenons la sécurité de tes données très au sérieux'}
           </p>
           <p className="text-sm text-slate-500 mt-2">
-            Dernière mise à jour : 8 janvier 2026
+            {isEn ? 'Last update: January 8, 2026' : 'Dernière mise à jour : 8 janvier 2026'}
           </p>
         </div>
 
@@ -42,18 +45,18 @@ export default function Privacy() {
                 <div className="p-2 rounded-lg bg-violet-100">
                   <Database className="w-5 h-5 text-violet-600" />
                 </div>
-                Données collectées
+                {isEn ? 'Collected data' : 'Données collectées'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-slate-700">
-              <p>StudyPlan collecte uniquement les données nécessaires à son fonctionnement :</p>
+              <p>{isEn ? 'StudPlan only collects data required for app features:' : 'StudPlan collecte uniquement les données nécessaires à son fonctionnement :'}</p>
               <ul className="list-disc list-inside space-y-2 ml-2">
-                <li><strong>Informations de profil</strong> : Niveau scolaire, spécialités (pour personnaliser l'expérience)</li>
-                <li><strong>Tâches et devoirs</strong> : Titres, matières, dates, descriptions que tu saisis</li>
+                <li><strong>{isEn ? 'Profile information' : 'Informations de profil'}</strong> : {isEn ? 'School level, specialties (to personalize experience)' : "Niveau scolaire, spécialités (pour personnaliser l'expérience)"}</li>
+                <li><strong>{isEn ? 'Tasks and homework' : 'Tâches et devoirs'}</strong> : {isEn ? 'Titles, subjects, dates, descriptions you enter' : 'Titres, matières, dates, descriptions que tu saisis'}</li>
                 <li><strong>Planning de révisions</strong> : Sessions générées par l'IA</li>
-                <li><strong>Préférences</strong> : Heures de révision, durée des sessions</li>
-                <li><strong>Photos (optionnel)</strong> : Images de devoirs que tu choisis d'uploader</li>
-                <li><strong>Identifiants Pronote/École Directe (optionnel)</strong> : Si tu actives la synchronisation automatique</li>
+                <li><strong>{isEn ? 'Preferences' : 'Préférences'}</strong> : {isEn ? 'Study hours, session duration' : 'Heures de révision, durée des sessions'}</li>
+                <li><strong>{isEn ? 'Photos (optional)' : 'Photos (optionnel)'}</strong> : {isEn ? 'Homework images you choose to upload' : "Images de devoirs que tu choisis d'uploader"}</li>
+                <li><strong>{isEn ? 'Pronote/Ecole Directe credentials (optional)' : 'Identifiants Pronote/École Directe (optionnel)'}</strong> : {isEn ? 'Only if you enable auto-sync' : 'Si tu actives la synchronisation automatique'}</li>
               </ul>
             </CardContent>
           </Card>
@@ -64,7 +67,7 @@ export default function Privacy() {
                 <div className="p-2 rounded-lg bg-emerald-100">
                   <Lock className="w-5 h-5 text-emerald-600" />
                 </div>
-                Sécurité et chiffrement
+                {isEn ? 'Security and encryption' : 'Sécurité et chiffrement'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-slate-700">
@@ -84,7 +87,7 @@ export default function Privacy() {
                 <div className="p-2 rounded-lg bg-blue-100">
                   <Eye className="w-5 h-5 text-blue-600" />
                 </div>
-                Utilisation des données
+                {isEn ? 'How data is used' : 'Utilisation des données'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-slate-700">
@@ -105,7 +108,7 @@ export default function Privacy() {
                 <div className="p-2 rounded-lg bg-amber-100">
                   <UserCheck className="w-5 h-5 text-amber-600" />
                 </div>
-                Tes droits
+                {isEn ? 'Your rights' : 'Tes droits'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-slate-700">
@@ -118,7 +121,7 @@ export default function Privacy() {
                 <li><strong>Droit d'opposition</strong> : Refuser le traitement de certaines données</li>
               </ul>
               <p className="mt-4 text-sm">
-                Pour exercer ces droits, tu peux nous contacter à l'adresse : <strong>privacy@studyplan.app</strong>
+                Pour exercer ces droits, tu peux nous contacter à l'adresse : <strong>hugodi777@outlook.fr</strong>
               </p>
             </CardContent>
           </Card>
@@ -129,7 +132,7 @@ export default function Privacy() {
                 <div className="p-2 rounded-lg bg-rose-100">
                   <AlertCircle className="w-5 h-5 text-rose-600" />
                 </div>
-                Conservation des données
+                {isEn ? 'Data retention' : 'Conservation des données'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-slate-700">
@@ -147,10 +150,10 @@ export default function Privacy() {
             <CardContent className="py-6">
               <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
                 <Shield className="w-5 h-5 text-violet-600" />
-                Notre engagement
+                {isEn ? 'Our commitment' : 'Notre engagement'}
               </h3>
               <p className="text-slate-700 leading-relaxed">
-                StudyPlan s'engage à protéger ta vie privée et la sécurité de tes données. 
+                StudPlan s'engage à protéger ta vie privée et la sécurité de tes données. 
                 Nous respectons scrupuleusement le RGPD et les lois françaises sur la protection des données. 
                 Tes données personnelles restent <strong>TA propriété</strong> et ne seront jamais utilisées 
                 à des fins commerciales ou publicitaires.
@@ -160,7 +163,7 @@ export default function Privacy() {
 
           <div className="text-center pt-8">
             <p className="text-sm text-slate-500 mb-4">
-              Des questions sur notre politique de confidentialité ?
+              {isEn ? 'Questions about our privacy policy?' : 'Des questions sur notre politique de confidentialité ?'}
             </p>
             <p className="text-sm text-slate-600">
               Contact : <a href="mailto:hugodi777@outlook.fr" className="text-violet-600 hover:text-violet-700 font-medium">
@@ -171,9 +174,9 @@ export default function Privacy() {
 
           <div className="mt-8 pt-6 border-t border-slate-200">
             <p className="text-center text-xs text-slate-500">
-              © {new Date().getFullYear()} StudyPlan - Tous droits réservés
+              © {new Date().getFullYear()} StudPlan - {isEn ? 'All rights reserved' : 'Tous droits réservés'}
               <br />
-              Application créée par <span className="font-semibold text-slate-700">Hugo Di Chiara</span>
+              {isEn ? 'App created by ' : 'Application créée par '}<span className="font-semibold text-slate-700">Hugo Di Chiara</span>
             </p>
           </div>
         </div>

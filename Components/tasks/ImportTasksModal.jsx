@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Upload, FileText, Sparkles, AlertCircle, Loader2, Camera } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { studyplanApi } from "@/api/studyplanClient";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { getSubjectsForLevel, calculateEstimatedMinutes } from "@/components/utils/subjects";
 
@@ -28,10 +28,10 @@ export default function ImportTasksModal({ open, onOpenChange, onImport, userPre
     setError('');
 
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await studyplanApi.integrations.Core.UploadFile({ file });
       setUploadedImage(file_url);
       
-      const result = await base44.integrations.Core.InvokeLLM({
+      const result = await studyplanApi.integrations.Core.InvokeLLM({
         prompt: `Tu es un assistant qui aide les élèves à organiser leurs devoirs.
         
 Analyse cette photo de devoirs et extrais toutes les tâches. Pour chaque tâche:
@@ -91,7 +91,7 @@ Sois précis sur les dates et les matières.`,
     setIsProcessing(true);
     setError('');
     
-    const result = await base44.integrations.Core.InvokeLLM({
+    const result = await studyplanApi.integrations.Core.InvokeLLM({
       prompt: `Tu es un assistant qui aide à créer des tâches de révision.
       
 Analyse ce texte et extrais les tâches/devoirs à faire. Pour chaque tâche, détermine:

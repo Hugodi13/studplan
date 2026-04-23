@@ -89,6 +89,11 @@ export default function AddTaskModal({ open, onOpenChange, onAdd, task, userPref
             </div>
             {task ? 'Modifier la tâche' : 'Nouvelle tâche'}
           </DialogTitle>
+          {!task ? (
+            <p className="text-sm text-slate-500">
+              Tu peux créer la tâche ici directement, ou utiliser "Importer" pour la générer depuis du texte/photo.
+            </p>
+          ) : null}
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">

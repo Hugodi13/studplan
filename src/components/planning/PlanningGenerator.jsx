@@ -12,6 +12,7 @@ export default function PlanningGenerator({ open, onOpenChange, tasks, onGenerat
   const [dailyMinutes, setDailyMinutes] = useState(90);
   const [includeWeekends, setIncludeWeekends] = useState(true);
   const [includeSunday, setIncludeSunday] = useState(userPrefs?.include_sunday || false);
+  const [useForgettingCurve, setUseForgettingCurve] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const pendingTasks = tasks.filter(t => t.status !== 'termine');
@@ -91,8 +92,34 @@ export default function PlanningGenerator({ open, onOpenChange, tasks, onGenerat
         }
       }
       
-      // Add review session the day before due date
-      if (needsReview && task.due_date) {
+      // Add spaced-repetition reviews (forgetting curve).
+      if (needsReview && task.due_date && useForgettingCurve) {
+        const dueDate = new Date(task.due_date);
+        const nowDate = new Date();
+        const daysUntilDue = Math.max(0, differenceInDays(dueDate, nowDate));
+        const offsets = daysUntilDue >= 10 ? [7, 3, 1] : daysUntilDue >= 5 ? [3, 1] : [1];
+
+        offsets.forEach((offset, idx) => {
+          const reviewDate = addDays(dueDate, -offset);
+          if (!isBefore(nowDate, reviewDate)) return;
+          if (!includeWeekends && isWeekend(reviewDate)) return;
+          if (!includeSunday && reviewDate.getDay() === 0) return;
+
+          sessions.push({
+            task_id: task.id,
+            scheduled_date: format(reviewDate, 'yyyy-MM-dd'),
+            duration_minutes: 15 + (idx === offsets.length - 1 ? 10 : 0),
+            start_time: getStartTime(0, studyStartHour),
+            completed: false,
+            task_title: `🧠 Révision J-${offset}: ${task.title}`,
+            task_subject: task.subject,
+            task_difficulty: task.difficulty,
+            is_review: true,
+            review_stage: `J-${offset}`,
+          });
+        });
+      } else if (needsReview && task.due_date) {
+        // Fallback simple review the day before due date.
         const reviewDate = addDays(new Date(task.due_date), -1);
         if (isBefore(new Date(), reviewDate)) {
           sessions.push({
@@ -246,16 +273,39 @@ export default function PlanningGenerator({ open, onOpenChange, tasks, onGenerat
             </p>
           </div>
 
-          {/* Spaced repetition info */}
-          <div className="p-4 rounded-xl bg-violet-50 border border-violet-200">
+          {/* Forgetting curve / spaced repetition */}
+          <div className="p-4 rounded-xl bg-violet-50 border border-violet-200 space-y-3">
             <div className="flex items-start gap-3">
               <Repeat className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-violet-700">Révision espacée</p>
+                <p className="text-sm font-medium text-violet-700">Courbe de l’oubli (révision espacée)</p>
                 <p className="text-xs text-violet-600 mt-1">
-                  L'IA ajoutera automatiquement une révision la veille de chaque devoir pour optimiser ta mémorisation
+                  Active des rappels J-7 / J-3 / J-1 (selon délai avant devoir) pour mieux retenir sur la durée.
                 </p>
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant={useForgettingCurve ? "default" : "outline"}
+                size="sm"
+                onClick={() => setUseForgettingCurve(!useForgettingCurve)}
+                className={useForgettingCurve ? "bg-violet-600 hover:bg-violet-700" : ""}
+              >
+                {useForgettingCurve ? "Activée" : "Désactivée"}
+              </Button>
+              <p className="text-xs text-violet-700">Mémorisation long terme</p>
+            </div>
+            <div className="rounded-lg bg-white/70 border border-violet-100 p-2">
+              <div className="flex items-end gap-1 h-10">
+                <div className="w-2 rounded-t bg-violet-500 h-9" />
+                <div className="w-2 rounded-t bg-violet-400 h-6" />
+                <div className="w-2 rounded-t bg-violet-300 h-4" />
+                <div className="w-2 rounded-t bg-violet-500 h-7" />
+                <div className="w-2 rounded-t bg-violet-300 h-4" />
+                <div className="w-2 rounded-t bg-violet-500 h-8" />
+              </div>
+              <p className="text-[11px] text-violet-700 mt-1">Pic de rappel à chaque révision (J-7, J-3, J-1)</p>
             </div>
           </div>
         </div>

@@ -6,14 +6,127 @@
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #0f172a;
   background-color: #f8fafc;
+  color-scheme: light;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: #f8fafc;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 * {
   box-sizing: border-box;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #020617;
+  color: #e2e8f0;
+}
+
+.dark .bg-white,
+.dark .bg-white\/80,
+.dark .bg-white\/90 {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-50\/30,
+.dark .bg-slate-50\/40,
+.dark .bg-slate-50\/50,
+.dark .bg-slate-100,
+.dark .bg-slate-100\/80 {
+  background-color: #111827 !important;
+}
+
+/* Make main page gradient shells truly dark */
+.dark [class*="from-slate-50"][class*="to-violet-50"],
+.dark [class*="from-slate-50"][class*="to-indigo-100"],
+.dark [class*="from-slate-50"][class*="via-white"],
+.dark [class*="from-slate-50"][class*="to-violet-50/30"],
+.dark [class*="from-slate-50"][class*="to-violet-50/40"] {
+  background-image: none !important;
+  background-color: #020617 !important;
+}
+
+/* Keep headers/cards readable in dark */
+.dark header,
+.dark .backdrop-blur-xl {
+  background-color: rgba(2, 6, 23, 0.9) !important;
+}
+
+.dark .shadow-xl,
+.dark .shadow-lg,
+.dark .shadow-md,
+.dark .shadow-sm {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+.dark .bg-violet-50,
+.dark .bg-violet-50\/30,
+.dark .bg-violet-50\/40,
+.dark .bg-violet-50\/50,
+.dark .bg-indigo-50,
+.dark .bg-indigo-50\/30 {
+  background-color: #1e1b4b !important;
+}
+
+.dark .text-slate-900 { color: #f8fafc !important; }
+.dark .text-slate-800 { color: #e2e8f0 !important; }
+.dark .text-slate-700 { color: #cbd5e1 !important; }
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-slate-400 { color: #94a3b8 !important; }
+
+.dark .text-violet-700,
+.dark .text-violet-600 {
+  color: #c4b5fd !important;
+}
+
+/* Specific fixes: reward level card + install tip visibility in dark mode */
+.dark .reward-surface {
+  background-image: none !important;
+  background-color: #1e1b4b !important;
+  border-color: #4338ca !important;
+}
+
+.dark .reward-title {
+  color: #f8fafc !important;
+}
+
+.dark .reward-subtext {
+  color: #cbd5e1 !important;
+}
+
+.dark .install-tip-surface {
+  background-image: none !important;
+  background-color: #312e81 !important;
+  border-color: #6366f1 !important;
+  color: #eef2ff !important;
+}
+
+.dark .border-slate-200,
+.dark .border-slate-200\/50,
+.dark .border-slate-300 {
+  border-color: #334155 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #e2e8f0;
+    background-color: #020617;
+    color-scheme: dark;
+  }
 }

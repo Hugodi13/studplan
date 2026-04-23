@@ -38,16 +38,18 @@ export default function TaskCard({ task, onStatusChange, onDelete, onEdit }) {
     )}>
       <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-violet-500 to-indigo-500" />
       
-      <div className="p-5 pl-6">
+      <div className="p-4 pl-5 sm:p-5 sm:pl-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2">
               <button 
+                type="button"
                 onClick={() => onStatusChange(task, task.status === 'termine' ? 'a_faire' : 'termine')}
-                className="flex-shrink-0 transition-transform hover:scale-110"
+                className="flex-shrink-0 min-h-[44px] min-w-[44px] -ml-2 flex items-center justify-center rounded-xl active:scale-95 transition-transform sm:hover:scale-110 touch-manipulation"
+                aria-label={task.status === 'termine' ? 'Marquer à faire' : 'Marquer terminé'}
               >
                 <StatusIcon className={cn(
-                  "w-5 h-5",
+                  "w-6 h-6",
                   task.status === 'termine' ? "text-emerald-500" : "text-slate-400"
                 )} />
               </button>
@@ -84,22 +86,24 @@ export default function TaskCard({ task, onStatusChange, onDelete, onEdit }) {
             )}
           </div>
           
-          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               onClick={() => onEdit(task)}
-              className="text-slate-400 hover:text-violet-500"
+              className="text-slate-600 hover:text-violet-600 hover:border-violet-300 border-slate-200 bg-white/90 h-12 w-12 min-h-[48px] min-w-[48px] touch-manipulation shadow-sm"
+              aria-label="Modifier la tâche"
             >
-              <Edit3 className="w-4 h-4" />
+              <Edit3 className="w-6 h-6 shrink-0" strokeWidth={2.25} />
             </Button>
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               onClick={() => onDelete(task)}
-              className="text-slate-400 hover:text-rose-500"
+              className="text-slate-600 hover:text-rose-600 hover:border-rose-300 border-slate-200 bg-white/90 h-12 w-12 min-h-[48px] min-w-[48px] touch-manipulation shadow-sm"
+              aria-label="Supprimer la tâche"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-6 h-6 shrink-0" strokeWidth={2.25} />
             </Button>
           </div>
         </div>

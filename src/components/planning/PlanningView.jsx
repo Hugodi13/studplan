@@ -41,20 +41,22 @@ export default function PlanningView({ sessions, onToggleComplete, onMoveSession
   return (
     <div className="space-y-6">
       {/* Date Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => onDateChange(addDays(selectedDate, -1))}
+          className="h-11 w-11 shrink-0 touch-manipulation"
+          aria-label="Jour précédent"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-6 h-6" />
         </Button>
         
-        <div className="text-center">
-          <h2 className="text-xl font-bold text-slate-800 capitalize">
+        <div className="text-center min-w-0 flex-1 px-1">
+          <h2 className="text-base sm:text-xl font-bold text-slate-800 capitalize truncate">
             {getDayLabel(selectedDate)}
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-xs sm:text-sm text-slate-500 truncate">
             {format(selectedDate, "d MMMM yyyy", { locale: fr })}
           </p>
         </div>
@@ -63,8 +65,10 @@ export default function PlanningView({ sessions, onToggleComplete, onMoveSession
           variant="ghost"
           size="icon"
           onClick={() => onDateChange(addDays(selectedDate, 1))}
+          className="h-11 w-11 shrink-0 touch-manipulation"
+          aria-label="Jour suivant"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-6 h-6" />
         </Button>
       </div>
 
@@ -108,13 +112,15 @@ export default function PlanningView({ sessions, onToggleComplete, onMoveSession
             >
               <div className="flex items-start gap-3 sm:gap-4">
                 <button
+                  type="button"
                   onClick={() => onToggleComplete(session)}
-                  className="flex-shrink-0 mt-1 hover:scale-110 transition-transform"
+                  className="flex-shrink-0 mt-0.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl active:scale-95 sm:hover:scale-110 transition-transform touch-manipulation"
+                  aria-label={session.completed ? 'Marquer non fait' : 'Marquer fait'}
                 >
                   {session.completed ? (
-                    <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" />
+                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                   ) : (
-                    <Circle className="w-5 h-5 sm:w-6 sm:h-6 text-slate-300" />
+                    <Circle className="w-6 h-6 text-slate-300" />
                   )}
                 </button>
                 
@@ -152,14 +158,15 @@ export default function PlanningView({ sessions, onToggleComplete, onMoveSession
                 
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   onClick={(e) => {
                     e.stopPropagation();
                     onMoveSession(session);
                   }}
-                  className="flex-shrink-0 ml-auto sm:ml-0"
+                  className="flex-shrink-0 ml-auto sm:ml-0 h-11 w-11 touch-manipulation"
+                  aria-label="Déplacer la session"
                 >
-                  <MoveRight className="w-4 h-4" />
+                  <MoveRight className="w-5 h-5" />
                 </Button>
               </div>
             </Card>
@@ -169,7 +176,7 @@ export default function PlanningView({ sessions, onToggleComplete, onMoveSession
 
       {/* Quick date navigation */}
       {datesWithSessions.length > 0 && (
-        <div className="flex gap-2 overflow-x-auto pb-2 pt-4 border-t border-slate-100">
+        <div className="flex gap-2 overflow-x-auto pb-2 pt-4 border-t border-slate-100 -mx-1 px-1 snap-x snap-mandatory scroll-pl-2">
           {datesWithSessions.slice(0, 7).map((dateStr) => {
             const date = new Date(dateStr);
             const daySessionCount = sessions.filter(s => s.scheduled_date === dateStr).length;

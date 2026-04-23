@@ -1,0 +1,21 @@
+<svg width="900" height="520" viewBox="0 0 900 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="520" rx="24" fill="#EEF2FF"/>
+  <rect x="42" y="42" width="816" height="436" rx="18" fill="white" stroke="#C7D2FE" stroke-width="2"/>
+  <text x="72" y="96" fill="#312E81" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700">Pronote - Export PDF des devoirs</text>
+  <rect x="72" y="126" width="340" height="120" rx="14" fill="#EEF2FF"/>
+  <text x="92" y="166" fill="#3730A3" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">1) Ouvre Pronote</text>
+  <text x="92" y="198" fill="#4338CA" font-family="Inter, Arial, sans-serif" font-size="18">Va dans Cahier de texte</text>
+  <text x="92" y="224" fill="#4338CA" font-family="Inter, Arial, sans-serif" font-size="18">puis s�lectionne tes devoirs.</text>
+  <rect x="488" y="126" width="340" height="120" rx="14" fill="#EEF2FF"/>
+  <text x="508" y="166" fill="#3730A3" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">2) Clique Imprimer / Export</text>
+  <text x="508" y="198" fill="#4338CA" font-family="Inter, Arial, sans-serif" font-size="18">Choisis PDF puis t�l�charge</text>
+  <text x="508" y="224" fill="#4338CA" font-family="Inter, Arial, sans-serif" font-size="18">le document g�n�r�.</text>
+  <rect x="280" y="286" width="340" height="140" rx="14" fill="#E0E7FF"/>
+  <text x="300" y="326" fill="#312E81" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">3) D�pose le PDF dans StudPlan</text>
+  <text x="300" y="358" fill="#4338CA" font-family="Inter, Arial, sans-serif" font-size="18">Le fichier est analys� localement</text>
+  <text x="300" y="384" fill="#4338CA" font-family="Inter, Arial, sans-serif" font-size="18">et les t�ches sont cr��es automatiquement.</text>
+  <path d="M428 185H468" stroke="#4F46E5" stroke-width="8" stroke-linecap="round"/>
+  <path d="M458 171L476 185L458 199" stroke="#4F46E5" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M620 256L560 286" stroke="#4F46E5" stroke-width="8" stroke-linecap="round"/>
+  <path d="M558 268L546 292L572 292" fill="#4F46E5"/>
+</svg>
