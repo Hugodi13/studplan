@@ -54,7 +54,7 @@ export const MESSAGES = {
     premiumPaypalMissing: 'Lien PayPal manquant. Configure VITE_PAYPAL_SUBSCRIBE_URL.',
     premiumTestLocal: 'Activer Premium (démo locale)',
     premiumFooterNote:
-      'PayPal • Le statut premium est activé après validation du paiement • Annulation en 1 clic (idéal : webhook PayPal + Edge Function pour verrouiller côté serveur)',
+      'PayPal • Le Premium est activé après validation du paiement côté serveur (webhook) • Annulation en 1 clic',
     premiumTrustSecure: 'Paiement sécurisé',
     premiumTrustGrades: 'Notes en hausse',
     premiumTrustFlexible: 'Sans engagement',
@@ -152,7 +152,7 @@ export const MESSAGES = {
     premiumPaypalMissing: 'Missing PayPal link. Set VITE_PAYPAL_SUBSCRIBE_URL.',
     premiumTestLocal: 'Enable Premium (local demo)',
     premiumFooterNote:
-      'PayPal • Premium activates after payment is confirmed • One-click cancel (best: PayPal webhook + server function)',
+      'PayPal • Premium is activated on the server after payment (webhook) • One-click cancel',
     premiumTrustSecure: 'Secure payment',
     premiumTrustGrades: 'Better grades',
     premiumTrustFlexible: 'No commitment',

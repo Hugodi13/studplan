@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "cf:login": "wrangler login",
-    "cf:deploy": "npm run build && wrangler pages deploy dist --project-name=studyplan"
+    "cf:deploy": "npm run build && wrangler pages deploy dist --project-name=studplan",
+    "ci": "npm run lint && npm run build"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.2",

@@ -175,15 +175,10 @@ export default function Home() {
     if (userPrefs?.locale) setLocale(userPrefs.locale)
   }, [userPrefs?.locale, setLocale])
 
-  // Retour paiement (ex. ?billing=paypal) : activer Premium
+  // Retour PayPal (ex. ?billing=paypal) : rafraîchir l’abonnement (activation = webhook côté Supabase)
   useEffect(() => {
     const b = searchParams.get('billing')
-    if ((b === 'paypal' || b === 'success') && import.meta.env.DEV) {
-      void (async () => {
-        try {
-          await studyplanApi.billing.activatePaypalPremium({ orderId: searchParams.get('orderId') || undefined })
-        } catch { /* */ }
-      })()
+    if (b === 'paypal' || b === 'success') {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       const next = new URLSearchParams(searchParams)
       next.delete('billing')

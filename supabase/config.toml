@@ -1,0 +1,8 @@
+# Lier le projet: supabase link --project-ref <ref>
+# Déployer: supabase functions deploy paypal-webhook  &&  supabase functions deploy paypal-dev-grant
+
+[functions.paypal-webhook]
+verify_jwt = false
+
+[functions.paypal-dev-grant]
+verify_jwt = true

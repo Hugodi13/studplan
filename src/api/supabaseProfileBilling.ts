@@ -87,24 +87,24 @@ export const getSubscriptionForCurrentUser = async (email: string) => {
 type LocalUser = AppUser
 
 export const activatePaypalInSupabase = async (user: LocalUser, opts?: { orderId?: string; subscriptionId?: string }) => {
-  if (isSupabaseConfigured()) {
+  if (isSupabaseConfigured() && import.meta.env.DEV && opts?.orderId === 'dev_test') {
     const s = getSupabase()
-    const end = new Date()
-    end.setMonth(end.getMonth() + 1)
-    const { error } = await s
-      .from('profiles')
-      .update({
-        is_premium: true,
-        is_subscription_active: true,
-        payment_provider: 'paypal',
-        paypal_order_id: opts?.orderId ?? null,
-        paypal_subscription_id: opts?.subscriptionId ?? null,
-        subscription_start_date: new Date().toISOString().slice(0, 10),
-        subscription_end_date: end.toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', user.id)
-    if (!error) return
+    const { data: { session } } = await s.auth.getSession()
+    if (!session) throw new Error('Session requise')
+    const base = (import.meta.env.VITE_SUPABASE_URL as string).replace(/\/$/, '')
+    const r = await fetch(`${base}/functions/v1/paypal-dev-grant`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+    if (!r.ok) {
+      const errBody = await r.text().catch(() => '')
+      throw new Error(errBody || 'dev_premium')
+    }
+    return
+  }
+  if (isSupabaseConfigured()) {
+    // Prod (et le reste) : le Premium PayPal n’est appliqué que par l’Edge Function (webhook PayPal).
+    return
   }
   const planId = 'sub_premium_paypal'
   const list = readEntityLocal('Subscription', user.id).filter((r) => (r as { id?: string }).id !== planId)
